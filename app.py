@@ -1,3 +1,6 @@
+# pylint: disable=missing-module-docstring
+# pylint: disable=missing-function-docstring
+
 import duckdb
 import pandas as pd
 import streamlit as st
@@ -26,7 +29,7 @@ df_customers = pd.DataFrame(customers_data)
 df_stores = pd.DataFrame(stores_data)
 df_store_products = pd.DataFrame(store_products_data)
 df_products = pd.DataFrame(products_data)
-answer_query = """
+ANSWER_QUERY = """
     SELECT * FROM df_customers
     LEFT JOIN df_stores
     USING (customer_id)
@@ -63,7 +66,7 @@ with questionTab:
     print_df("df_stores", df_stores)
     print_df("df_store_products", df_store_products)
     print_df("df_products", df_products)
-    print_df("Expected", duckdb.query(answer_query).df())
+    print_df("Expected", duckdb.query(ANSWER_QUERY).df())
 
 with answerTab:
-    st.write(answer_query)
+    st.write(ANSWER_QUERY)
