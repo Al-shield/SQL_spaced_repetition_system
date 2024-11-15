@@ -10,5 +10,6 @@ st.write("df :", df)
 client_query = st.text_area(label="Request to apply on this dataframe")
 result_df = duckdb.sql(client_query)
 
-st.write("Result")
-st.write(result_df.df())
+if client_query != "":
+    st.write("Result")
+    st.write(result_df.df())
