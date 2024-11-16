@@ -1,3 +1,4 @@
+import logging
 import os
 import subprocess
 import sys
@@ -5,11 +6,9 @@ import sys
 import duckdb
 import pandas as pd
 import streamlit as st
-import logging
-
-from solution_resolver import check_answer
 from streamlit.logger import get_logger
 
+from solution_resolver import check_answer
 
 app_logger = get_logger(__name__)
 app_logger.setLevel(logging.INFO)
@@ -27,9 +26,11 @@ if "exercises_sql_tables.duckdb" not in os.listdir("data"):
 
 con = duckdb.connect(database="data/exercises_sql_tables.duckdb", read_only=False)
 
+
 def print_df(name, df):
     st.write(name)
     st.write(df)
+
 
 with st.sidebar:
     currentTheme = st.selectbox(
@@ -38,9 +39,11 @@ with st.sidebar:
         placeholder="Sélectionner un thème",
     )
     st.write(f"Thème actuel : {currentTheme}")
-    exercises = con.query(f"SELECT * FROM memory_state WHERE theme = '{currentTheme}' ORDER BY last_reviewed").df()
+    exercises = con.query(
+        f"SELECT * FROM memory_state WHERE theme = '{currentTheme}' ORDER BY last_reviewed"
+    ).df()
     st.write("Exercices disponibles:")
-    for exercise_name in exercises['exercice_name'].tolist():
+    for exercise_name in exercises["exercice_name"].tolist():
         st.write(exercise_name)
 
     ANSWER_FILE_PATH = exercises.loc[0, "answers"]
@@ -53,9 +56,7 @@ with st.sidebar:
     exercise_question = exercises.loc[0, "questions"]
 
 st.header("Entrer votre requête")
-client_query = st.text_area(
-    label=exercise_question
-)
+client_query = st.text_area(label=exercise_question)
 
 if client_query != "":
     result_df = con.execute(client_query).df()
@@ -66,7 +67,7 @@ if client_query != "":
 questionTab, answerTab = st.tabs(["Tables", "Réponse"])
 
 with questionTab:
-    exercise_table = exercises.loc[0, 'tables'].tolist()
+    exercise_table = exercises.loc[0, "tables"].tolist()
     for table in exercise_table:
         table_df = con.query(f"SELECT * FROM {table}").df()
         print_df(table, table_df)
