@@ -1,15 +1,35 @@
+import os
+import subprocess
+import sys
+
 import duckdb
 import pandas as pd
 import streamlit as st
+import logging
 
 from solution_resolver import check_answer
+from streamlit.logger import get_logger
+
+
+app_logger = get_logger(__name__)
+app_logger.setLevel(logging.INFO)
+
+# duckdb database set up
+if "data" not in os.listdir():
+    app_logger.info("duckdb database set up")
+    app_logger.info("List working directory content: %s", os.listdir())
+    app_logger.info("Create 'data' folder, if it doesn't exist")
+    os.makedirs("data", exist_ok=True)
+
+if "exercises_sql_tables.duckdb" not in os.listdir("data"):
+    app_logger.info("Create Database and tables")
+    subprocess.run([f"{sys.executable}", "init_db.py"], check=False)
 
 con = duckdb.connect(database="data/exercises_sql_tables.duckdb", read_only=False)
 
 def print_df(name, df):
     st.write(name)
     st.write(df)
-
 
 with st.sidebar:
     currentTheme = st.selectbox(
